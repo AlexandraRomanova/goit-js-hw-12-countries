@@ -20,7 +20,6 @@ const refs = {
 refs.searchInput.addEventListener('input', debounce(onSearch, 500))
 
 function onSearch(e) {
-    e.preventDefault();
     clearCountryContainer();
 
     const searchQuery = e.target.value.trim();
@@ -30,10 +29,11 @@ function onSearch(e) {
             if (arrayOfContries.length > 10) {
                 return onFetchError();
             }
-            if (arrayOfContries.length >= 2 && arrayOfContries.length <= 10) {
+            else if (arrayOfContries.length >= 2 && arrayOfContries.length <= 10) {
                 return renderCountryList(arrayOfContries);
+                addListenersCountriesList();
             }
-            if (arrayOfContries.length === 1) {
+            else if (arrayOfContries.length === 1) {
                 return renderCountryCard(arrayOfContries);
             }
         })
@@ -47,6 +47,17 @@ function renderCountryCard(country) {
 
 function renderCountryList(countries) {
     refs.coutriesContainer.innerHTML = countriesListTpl(countries);
+}
+
+function onCountriesListClick(e) {
+    let countryName = e.target.dataset.name;
+    fetchCountries(countryName).then(renderCountryCard);
+}
+
+function addListenersCountriesList() {
+    countriesListTpl.forEach.call(element => {
+        element.addEventListener('click', onCountriesListClick)
+    })
 }
 
 function clearCountryContainer() {
